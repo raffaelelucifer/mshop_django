@@ -1,0 +1,36 @@
+<!-- postpoll.html (mvote project) -->
+{% extends "base.html" %}
+{% block title %}添加投票主题{% endblock %}
+{% block content %}
+<div class='container'>
+{% if message %}
+    <div class='alert alert-warning'>{{ message }}</div>
+{% endif %}
+
+<!-- <form name='postpoll' action='/redact' method='POST'>
+    请填写如下信息:<br/><br/>
+    <label for='poll'>投票主题: </label> <br/><br/>
+    <input id='poll' type='text' name='poll'>
+    <input type='submit' value='张贴'>
+    <input type='reset' value='清除重填'>
+</form>
+-->
+ 
+    <div class='panel panel-primary'>
+        <div class='panel-heading'>
+            <form name='postpoll' action='.' method='POST'>
+            {% csrf_token %}
+            <h3>添加投票主题</h3>
+        </div>
+        <div class='panel-body'>
+            <table>
+            {{ post_form.as_table }}
+            </table>
+        </div>
+        <div class='panel-footer'>
+            <input type='submit' value='提交'>
+            </form>
+        </div> 
+    </div>
+</div>
+{% endblock %}

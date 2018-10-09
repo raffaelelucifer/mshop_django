@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}投票趣{% endblock %}
+{% block content %}
+<div class='container'>
+{% for message in messages %}
+    <div class='alert alert-{{message.tags}}'>{{ message }}</div>
+{% endfor %}
+
+<div class='row'>
+    <div class='col-md-12'>
+        <div class='panel panel-default'>
+            <div class='panel-heading' align=center>
+                <h3>编辑投票</h3>
+            </div>
+            <div class='panel-body'>
+                <li><a href='/addpoll'>添加投票主题</a></li>
+                <br/><br/>
+                <li><a href='/addpollitem'>添加投票项</a></li>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

@@ -1,0 +1,126 @@
+#_*_ coding:utf-8 _*_
+
+from mysite import models
+from django.http import JsonResponse, HttpResponse
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.views.decorators.csrf import  csrf_exempt
+from django.core import serializers
+#from singledispatch import singledispatch
+import json
+import datetime
+from decimal import Decimal
+# 
+#class DateEncoder(json.JSONEncoder ):
+#    def default(self, obj):
+#        if isinstance(obj, datetime):
+#            return obj.__str__()
+#        return json.JSONEncoder.default(self, obj)
+
+#class MyClass:
+#    def __init__(self, value):
+#        self._value = value
+#
+#    def get_value(self):
+#        return self._value
+#
+#def convert(o):
+#    raise TypeError('can not convert type')
+#
+#@singledispatch
+#def convert(o):
+#    raise TypeError('can not convert type')
+#
+#@convert.register(datetime)
+#def _(o):
+#    return o.strftime('%b %d %Y %H:%M:%S') 
+#
+#@convert.register(Decimal)
+#def _(o):
+#    return float(o)
+#
+#@convert.register(MyClass)
+#def _(o):
+#    return o.get_value()
+#
+#class ExtendJSONEncoder(json.JSONEncoder):
+#    def default(self, obj):
+#        try:
+#            return convert(obj)
+#        except TypeError:
+#            return super(ExtendJSONEncoder, self).default(obj)
+#分类展示
+#测试的时候我先把csrf关了
+@csrf_exempt
+def product_get(req):
+    #获取 post 数据
+    if req.method == 'POST':
+        cate = req.POST.get('cate','')
+        page = req.POST.get('page','')
+        context ={'status':200}
+        context['cate'] , context['page'] = cate ,page
+
+        #根据类别在数据库找到相应数据
+        if cate == '0':
+            #Products_list = serializers.serialize("json", models.Product.objects.all())
+            Products_list = models.Product.objects.all()
+        else:
+            try:
+                category = models.Category.objects.get(id=cate)
+            except:
+                category = None
+            if category is not None:
+                #Products_list = serializers.serialize("json", models.Product.objects.filter(category=category))
+                Products_list = models.Product.objects.filter(category=category)
+
+        #allcategories = models.Category.objects.all()
+        #if cat_id > 0:
+        #    try:
+        #        category = models.Category.objects.get(id=cat_id)
+        #    except:
+        #        category = None
+        #    if category is not None:
+        #        Products_list = serializers.serialize("json", models.Product.objects.filter(category=category))
+
+        #数据为空直接返回json
+    if Products_list == None:
+        return JsonResponse({'status':10021,'message':'parameter error'})
+
+    #分页
+    paginator = Paginator(Products_list,4)
+    try:
+        Productss = paginator.page(page)
+    except PageNotAnInteger:
+        Productss = paginator.page(1)
+    except EmptyPage:
+        Productss = paginator.page(paginator.num_pages)
+
+    #一页商品的个数，是否有前一页，是否有后一页
+    context['queryNum'],context['hasPrevios'],context['hasNext'] = len(Productss),Productss.has_previous(),Productss.has_next()
+
+    #将数据存入data[]
+    data = []
+    if Productss:
+        for i in Productss:
+            Product = {}
+            Product['sku'] = i.sku
+            Product['name'] = i.name
+            Product['description'] = i.description
+            catedev1 = str(i.category)
+            Product['category'] = catedev1.strip('<>')
+            catedev2 = str(i.image)
+            Product['image'] = catedev2.strip('<>')
+            Product['stock'] = i.stock
+            catedev3 = str(i.price)
+            Product['price'] = catedev3.strip('Decimal()')
+            data.append(Product)
+        # 将data存进context
+        context.update({'data':data})
+        # 返回json
+        #return JsonResponse(context)
+        return HttpResponse(json.dumps(context), content_type="application/json")
+        #return json.dumps(context, cls=ExtendJSONEncoder)
+        #context_value =  serializers.serialize("json", context)
+        #return HttpResponse(context_value)
+    else:
+        return  JsonResponse({'status':10022,'message':'query Products isempty'})
+    

@@ -1,0 +1,16 @@
+
+<!--<div class='row'>
+        <button class='btn btn-info'>
+            目前是第{{ polls.number }}页</a>
+        </button>
+    {% if polls.has_previous %}
+        <button class='btn btn-info'>
+            <a href='?p={{ polls.previous_page_number }}'>上一页</a>
+        </button>
+    {% endif %}
+    {% if polls.has_next %}
+        <button class='btn btn-info'>
+            <a href='?p={{ polls.next_page_number }}'>下一页</a>
+        </button>
+    {% endif %}
+</div> -->

@@ -1,0 +1,40 @@
+<!-- payment_canceled.html(mshop project) -->
+{% extends "base.html" %}
+{% block title %}Pay using PayPal{% endblock %}
+{% block content %}
+<div class='container'>
+{% for message in messages %}
+     <div class='alert alert-{{message.tags}}'>{{ message }}</div>
+{% endfor %}
+<div class='row'>
+    <div class='col-md-12'>
+        <div class='panel panel-default'>
+            <div class='panel-heading' align=center>
+                <h3>欢迎光临迷你电商</h3>
+                    {% if user.socialaccount_set.all.0.extra_data.name %}
+                        {{ user.socialaccount_set.all.0.extra_data.name }}<br/>
+                        <img src='{{ user.socialaccount_set.all.0.get_avatar.url }}' width='100'>
+                    {% else %}
+                        Welcome: {{ user.username }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='col-sm-12'>
+            <div class='panel panel-info'>
+                <div class='panel panel-heading'>
+                    <h4>您刚刚取消了PayPal的付款</h4>
+                </div>
+                <div class='panel panel-body'>
+                    <p>请再次检查您的付款，或者返回<a href='/myorders/'>我的订单</a>选用其他付款方式</p>    
+                </div>
+                <div class='panel panel-footer'>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
